@@ -1,0 +1,121 @@
+---
+to: "<%=authEnabled ? `${appName}/backend/apiauth.js` : null%>"
+---
+const passport = require( 'passport' )
+const JwtStrategy = require( 'passport-jwt' ).Strategy
+const ExtractJwt = require( 'passport-jwt' ).ExtractJwt
+const jwt = require( 'jsonwebtoken' )
+const { log } = require( '@srfnstack/spliffy' )
+<% if ( userApiEnabled ){%>
+const crypto = require( 'crypto' )
+<%}%>
+if( !process.env.JWT_SECRET ) {
+    log.warning( 'JWT_SECRET unset, using default secret. This is _extremely_ insecure, set it by adding it to $HOME/.<%=appName%>.env.' )
+}
+if( !process.env.JWT_ISSUER ) {
+    log.warning( 'JWT_ISSUER unset, your mother would be disappointed.' )
+}
+const jwtSecret = process.env.JWT_SECRET || 'bogus_secret'
+const jwtValidFor = process.env.JWT_VALID_FOR || '30m'
+const issuer = process.env.JWT_ISSUER || 'your mom'
+
+passport.use(
+    new JwtStrategy(
+        {
+            secretOrKey: jwtSecret,
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            issuer,
+            jsonWebTokenOptions: {
+                maxAge: jwtValidFor
+            }
+        },
+        ( jwtPayload, done ) => done(
+            null,
+            //This is the currently logged in user, it's available on the request in any controller via request.user
+            {
+                <% if ( userApiEnabled ){%>
+                id: jwtPayload.id,
+                username: jwtPayload.username,
+                <%if ( rolesEnabled ){%>
+                roles: jwtPayload.roles,
+                <%}%>
+                <%}%>
+                sub: jwtPayload.sub,
+            }
+        )
+    ) )
+<%if (googleAuthEnabled) {%>
+const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: '/api/auth/google/callback'
+        },
+        ( accessToken, refreshToken, profile, done ) => {
+            <%if ( userApiEnabled ){%>
+            profile.id = "google:"+profile.id
+            return done(
+                null,
+                {
+                    id: jwtPayload.id,
+                    googleId: profile.id,
+                    username: jwtPayload.username,
+                    sub: jwtPayload.sub,
+                    <%if ( rolesEnabled ){%>
+                        roles: jwtPayload.roles
+                    <%}%>
+                }
+            )
+            <%} else {%>
+                profile.id = "google:"+profile.id
+                return done(null, profile)
+            <%}%>
+        }
+    )
+)
+<%}%>
+module.exports = {
+    init() {
+        return passport.initialize()
+    },
+    <%if ( userApiEnabled ){%>
+    secureRandom( length = 16 ) {
+        return crypto.randomBytes( Math.ceil( length / 2 ) )
+            .toString( 'hex' )
+    },
+    hashPassword( password, salt ) {
+        if( !salt ) {
+            throw 'Salt Required'
+        }
+        const hash = crypto.createHmac( 'sha512', salt )
+        hash.update( password )
+        return hash.digest( 'hex' )
+    },
+    <%if ( rolesEnabled ){%>
+    requiresAnyRole: ( ...roles ) => {
+        return ( req, res, next ) => {
+            if( req.user && Array.isArray( req.user.roles ) ) {
+                for( let role of roles ) {
+                    if( req.user.roles.indexOf( role ) > -1 ) {
+                        next()
+                        return
+                    }
+                }
+            }
+            res.statusCode = 403
+            res.statusMessage = 'Forbidden'
+            res.end()
+        }
+    },
+    <%}%>
+    <%}%>
+    requiresAuthentication: passport.authenticate( 'jwt', { session: false } ),
+    createToken( jwtInfo ) {
+        return jwt.sign(
+            Object.assign( jwtInfo, { iss: issuer, id: jwtInfo.sub } ),
+            jwtSecret,
+            { expiresIn: jwtValidFor, algorithm: 'HS256' } )
+    }
+}

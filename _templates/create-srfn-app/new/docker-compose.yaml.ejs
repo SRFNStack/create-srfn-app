@@ -1,0 +1,21 @@
+---
+to: "<%=appName%>/docker-compose.yaml"
+---
+version: "3.7"
+
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    env_file:
+      - ./<%=appName%>.env
+    environment:
+      - ARDB_SERVICE_HOST=ardb
+
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./<%=appName%>.env

@@ -1,0 +1,35 @@
+---
+to: <%=appName%>/package.json
+helmetVersion:
+---
+{
+  "name": "<%=appName%>",
+  "version": "0.0.1",
+  "description": "A SRFNStack App",
+  "main": "start.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start.js"
+  },
+  "keywords": [],
+  "author": "your mom",
+  "license": "MIT",
+  "dependencies": {
+    <% if(userApiEnabled){ %>
+      "redis": "<%= locals.fntagsVersion || '3.1.2' %>"
+    "@srfnstack/redish": "<%= locals.redishVersion || '0.1.1' %>",
+    <%}%>
+    <% if(authEnabled){ %>
+    "jsonwebtoken": "<%= locals.jsonwebtokenVersion || '8.5.1' %>",
+    "passport": "<%= locals.passportVersion || '0.4.1' %>",
+    "passport-jwt": "<%= locals.passportJwtVersion || '4.0.0' %>",
+    <%}%>
+    <% if(googleAuthEnabled){ %>
+    "passport-google-oauth20": "<%= locals.passportGoogleOauth20Version || '2.0.0' %>",
+    <%}%>
+    "dotenv": "<%= locals.dotenvVersion || '10.0.0' %>",
+    "helmet": "<%= locals.helmetVersion || '4.6.0' %>",
+    "@srfnstack/spliffy": "<%= locals.spliffyVersion || '0.6.1' %>",
+    "@srfnstack/fntags": "<%= locals.fntagsVersion || '0.1.7' %>"
+  }
+}

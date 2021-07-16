@@ -1,0 +1,55 @@
+---
+to: <%=appName%>/www/app.mjs
+---
+import { style } from './lib/fnelements.mjs'
+import { modRouter, pathState, setRootPath } from './lib/fnroute.mjs'
+import appFrame from './part/appFrame.js'
+import four0h4 from './part/four0h4.js'
+<%if(authEnabled){%>
+import authFrame from './part/authFrame.js'
+import { goToLogin, initAuth, isAuthenticated } from './fn/auth.js'
+<%}%>
+setRootPath( '/' )
+
+let appStyle = style( `
+
+body {
+margin: 0;
+padding: 0;
+}
+
+` )
+
+<%if(authEnabled){%>
+initAuth().then( () =>
+<%}%>
+document.body.append(
+    appStyle,
+    modRouter(
+        {
+            routePath: '/ui',
+            <%if(authEnabled){%>
+            frame: ( route, module ) => {
+                if( module.requiresAuth && pathState().currentRoute !== '/login' && !isAuthenticated() ) {
+                    goToLogin()
+                    return 'redirecting...'
+                } else {
+                    return isAuthenticated() ? authFrame(route) : appFrame(route)
+                }
+            },
+            <%}else{%>
+            frame: ( route ) => appFrame(route),
+            <%}%>
+            onerror: e => {
+                console.error( e )
+                <%if(authEnabled){%>
+                return isAuthenticated() ? authFrame(four04()) : appFrame(four04())
+                <%}else{%>
+                return appFrame(four0h4())
+                <%}%>
+            }
+        } )
+    )
+<%if(authEnabled){%>
+)
+<%}%>

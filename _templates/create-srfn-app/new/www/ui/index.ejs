@@ -1,0 +1,16 @@
+---
+    to: <%=appName%>/www/ui/index.js
+---
+<% if (authEnabled) {%>
+    import login from './login.js'
+    import { goToLogin, isAuthenticated } from '../fun/auth.js'
+<%}%>
+
+export default ()=>{
+    <% if (authEnabled) {%>
+    if(!isAuthenticated()) {
+        return goToLogin()
+    }
+    <%}%>
+    return "Hello... world?"
+}
