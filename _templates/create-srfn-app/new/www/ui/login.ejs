@@ -2,7 +2,7 @@
     to: "<%=authEnabled ? `${appName}/www/ui/login.js` : null%>"
 ---
 import { button, div, form, h1, input } from '/lib/fnelements.mjs'
-import { doLogin, isAuthenticated } from '../fun/auth.js'
+import { doLogin, isAuthenticated } from '../fn/auth.js'
 import { fnlink, goTo } from '/lib/fnroute.mjs'
 import authFrame from '../part/authFrame.js'
 
@@ -10,7 +10,6 @@ export default () => {
     if( isAuthenticated() ) {
         goTo( '/', null, true )
     }
-    startBubbles()
 
     const passwordInput = input( {
                                      id: 'password',
@@ -53,7 +52,6 @@ export default () => {
                 'Login'
             )
         ),
-        div( { style: 'width: 100%; text-align: center;' }, fnlink( { to: '/forgotPassword' }, 'Forgot Password?' ) ),
-        bubbleOverlay
+        div( { style: 'width: 100%; text-align: center;' }, fnlink( { to: '/forgotPassword' }, 'Forgot Password?' ) )
     )
 }

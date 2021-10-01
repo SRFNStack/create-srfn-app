@@ -2,7 +2,9 @@
     to: <%=appName%>/start.js
 ---
 #!/usr/bin/env node
-require( 'dotenv' ).config( { path: __dirname + '/<%= appName %>.env' } )
+const os = require('os')
+const path = require('path')
+require( 'dotenv' ).config( { path: path.join(os.homedir(),'.<%= appName %>.env') } )
 let spliffy = require( '@srfnstack/spliffy' )
 const { log } = spliffy
 const helmet = require('helmet')
