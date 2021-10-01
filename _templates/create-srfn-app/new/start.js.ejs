@@ -8,7 +8,7 @@ const { log } = spliffy
 const helmet = require('helmet')
 
 <%if(authEnabled){%>
-    const auth = require( './backend/apiAuth.js' )
+    const auth = require( './src/apiAuth.js' )
 <%}%>
 
 const deployMode = process.env.DEPLOY_MODE || 'dev'

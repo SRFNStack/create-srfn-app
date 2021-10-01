@@ -1,0 +1,43 @@
+---
+    to: "<%=userApiEnabled ? `${appName}/db/userdb.js` : null%>"
+---
+const { db } = require('./db')
+
+const usersCollection = 'users'
+const usersTransactionsKey = userId => `user-transactions-${userId}`
+const rewardItemsCollection = userId => `rewardMenu-${userId}`
+const handleNotFound = ( obj ) => {
+    if( !obj ) throw { statusCode: 404, statusMessage: 'Not Found' }
+    else return obj
+}
+
+const userSchema = {
+    id: "string",
+    name: "string"
+}
+
+const ensureValidUser = ( user ) => {
+    if( !user ) {
+        throw { status: 400, message: 'Bad Request', body: {errors: ['user must be provided']} }
+    }
+    let errors = []
+    if( !user.name ) {
+        errors.push('name is required')
+    }
+    for( let key of Object.keys(user) ) {
+        if( !userSchema.hasOwnProperty(key) ) {
+            errors.push( `Unknown User Field ${key}` )
+        }
+    }
+    if(errors.length > 0){
+        throw { status: 400, message: 'Bad Request', body: {errors} }
+    }
+    return user
+}
+
+module.exports = {
+    getUsers: async ( userId, page, size ) => await db.findAll( usersCollection, page, size ),
+    getUser: async ( userId ) => await db.findOneById( userId ),
+    saveUser: async ( user ) => await db.save( ensureValidUser(user), usersCollection ),
+    deleteUser: async ( userId ) => await db.deleteById( userId, usersCollection ),
+}

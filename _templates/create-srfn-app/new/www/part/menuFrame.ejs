@@ -1,12 +1,9 @@
 ---
-to: <%=appName%>/www/part/appFrame.js
+    to: <%=appName%>/www/part/menuFrame.js
 ---
 import { div, flexCenteredCol, flexCenteredRow, h2 } from '/lib/fnelements.mjs'
 import { colors } from '../fn/constants.js'
-<%if(authEnabled || userApiEnabled){%>
-import menu from './menu.js'
-<%}%>
-
+import appMenu from './appMenu.js'
 
 export default function( ...children ){
     return flexCenteredCol(
@@ -37,9 +34,7 @@ export default function( ...children ){
                         'justify-content': 'center'
                     }
                 },
-                <%if(authEnabled || userApiEnabled){%>
-                menu,
-                <%}%>
+                appMenu,
                 h2( {
                         style: {
                             margin: 0,

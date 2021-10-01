@@ -1,5 +1,5 @@
 ---
-to: "<%=authEnabled ? `${appName}/backend/apiauth.js` : null%>"
+    to: "<%=authEnabled ? `${appName}/src/apiAuth.js` : null%>"
 ---
 const passport = require( 'passport' )
 const JwtStrategy = require( 'passport-jwt' ).Strategy
@@ -10,7 +10,7 @@ const { log } = require( '@srfnstack/spliffy' )
 const crypto = require( 'crypto' )
 <%}%>
 if( !process.env.JWT_SECRET ) {
-    log.warning( 'JWT_SECRET unset, using default secret. This is _extremely_ insecure, set it by adding it to $HOME/.<%=appName%>.env.' )
+    log.error( 'JWT_SECRET unset, using default secret. This is _extremely_ insecure, set a secret by adding `JWT_SECRET=foo` to $HOME/.<%=appName%>.env.' )
 }
 if( !process.env.JWT_ISSUER ) {
     log.warning( 'JWT_ISSUER unset, your mother would be disappointed.' )
@@ -31,7 +31,7 @@ passport.use(
         },
         ( jwtPayload, done ) => done(
             null,
-            //This is the currently logged in user, it's available on the request in any controller via request.user
+            //This is the currently logged in user, it's available on the request in any authenticated controller via request.user
             {
                 <% if ( userApiEnabled ){%>
                 id: jwtPayload.id,
@@ -54,8 +54,8 @@ passport.use(
             callbackURL: '/api/auth/google/callback'
         },
         ( accessToken, refreshToken, profile, done ) => {
-            <%if ( userApiEnabled ){%>
             profile.id = "google:"+profile.id
+            <%if ( userApiEnabled ){%>
             return done(
                 null,
                 {
@@ -69,8 +69,7 @@ passport.use(
                 }
             )
             <%} else {%>
-                profile.id = "google:"+profile.id
-                return done(null, profile)
+            return done(null, profile)
             <%}%>
         }
     )

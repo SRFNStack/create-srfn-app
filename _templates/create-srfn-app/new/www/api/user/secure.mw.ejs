@@ -1,0 +1,18 @@
+---
+    to: "<%=authEnabled ? `${appName}/www/api/secure.mw.js` : null%>"
+---
+const { requiresAuthentication<%if ( rolesEnabled ){%>, requiresAnyRole<%}%> } = require( '../../src/apiAuth.js' )
+<%if ( rolesEnabled ){%>
+const requiresRoles = [requiresAnyRole( 'admin')]
+<%}%>
+module.exports = {
+    middleware: {
+<%if ( rolesEnabled ){%>
+        POST: requiresRoles,
+        PUT: requiresRoles,
+        PATCH: requiresRoles,
+        DELETE: requiresRoles,
+<%}%>
+        ALL: [requiresAuthentication]
+    }
+}

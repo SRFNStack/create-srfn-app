@@ -13,9 +13,9 @@ services:
     environment:
       - ARDB_SERVICE_HOST=ardb
 
-  redis:
-    image: redis:6
+  ardb:
+    image: lupino/ardb-server
     ports:
-      - "6379:6379"
+      - "16379:16379"
     env_file:
       - ./<%=appName%>.env

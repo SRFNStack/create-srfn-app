@@ -3,10 +3,10 @@ to: <%=appName%>/www/app.mjs
 ---
 import { style } from './lib/fnelements.mjs'
 import { modRouter, pathState, setRootPath } from './lib/fnroute.mjs'
-import appFrame from './part/appFrame.js'
+import menuFrame from './part/menuFrame.js'
 import four0h4 from './part/four0h4.js'
 <%if(authEnabled){%>
-import authFrame from './part/authFrame.js'
+import centerFrame from './part/centerFrame.js'
 import { goToLogin, initAuth, isAuthenticated } from './fn/auth.js'
 <%}%>
 setRootPath( '/' )
@@ -34,18 +34,18 @@ document.body.append(
                     goToLogin()
                     return 'redirecting...'
                 } else {
-                    return isAuthenticated() ? authFrame(route) : appFrame(route)
+                    return isAuthenticated() ? centerFrame(route) : menuFrame(route)
                 }
             },
             <%}else{%>
-            frame: ( route ) => appFrame(route),
+            frame: ( route ) => menuFrame(route),
             <%}%>
             onerror: e => {
                 console.error( e )
                 <%if(authEnabled){%>
-                return isAuthenticated() ? authFrame(four04()) : appFrame(four04())
+                return isAuthenticated() ? centerFrame(four0h4()) : menuFrame(four0h4())
                 <%}else{%>
-                return appFrame(four0h4())
+                return menuFrame(four0h4())
                 <%}%>
             }
         } )
