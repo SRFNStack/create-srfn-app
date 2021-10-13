@@ -1,5 +1,5 @@
 ---
-    to: "<%=userApiEnabled ? `${appName}/db/db.js` : null%>"
+    to: "<%=appName%>/lib/db.js"
 ---
 const redish = require( '@srfnstack/redish' )
 const redis = require( 'redis' )

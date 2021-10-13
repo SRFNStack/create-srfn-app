@@ -18,20 +18,19 @@ async function run() {
         },
         {
             type: 'confirm',
-            default: false,
-            name: 'userApiEnabled',
-            message: "Enable User Api?"
-        },
-        {
-            type: 'confirm',
             name: 'authEnabled',
             default: false,
             message: "Enable JWT auth?"
         },
-
+        {
+            type: 'confirm',
+            name: 'googleAuthEnabled',
+            default: false,
+            message: "Enable Google Auth?"
+        }
     ] )
 
-    if(config.userApiEnabled) {
+    if(config.authEnabled) {
         Object.assign(config, await prompt([
             {
                 type: 'confirm',
@@ -40,22 +39,6 @@ async function run() {
                 message: "Enable roles?"
             }
         ]))
-    } else {
-        config.rolesEnabled = false
-    }
-
-    if( config.authEnabled ) {
-        Object.assign( config, await prompt( [
-                {
-                    type: 'confirm',
-                    name: 'googleAuthEnabled',
-                    default: false,
-                    message: "Enable Google Auth?"
-                }
-            ] )
-        )
-    } else {
-        config.googleAuthEnabled = false
     }
 
     await runner( [

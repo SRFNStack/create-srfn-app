@@ -10,7 +10,7 @@ const { log } = spliffy
 const helmet = require('helmet')
 
 <%if(authEnabled){%>
-    const auth = require( './src/apiAuth.js' )
+    const auth = require( './lib/apiAuth.js' )
 <%}%>
 
 const deployMode = process.env.DEPLOY_MODE || 'dev'
@@ -30,15 +30,15 @@ spliffy(
         nodeModuleRoutes:{
             files: [
                 {
-                    modulePath: '@srfnstack/fntags/src/fntags.mjs',
+                    modulePath: '@srfnstack/fntags/lib/fntags.mjs',
                     urlPath: 'fntags.mjs'
                 },
                 {
-                    modulePath: '@srfnstack/fntags/src/fnroute.mjs',
+                    modulePath: '@srfnstack/fntags/lib/fnroute.mjs',
                     urlPath: 'fnroute.mjs'
                 },
                 {
-                    modulePath: '@srfnstack/fntags/src/fnelements.mjs',
+                    modulePath: '@srfnstack/fntags/lib/fnelements.mjs',
                     urlPath: 'fnelements.mjs'
                 }
             ]

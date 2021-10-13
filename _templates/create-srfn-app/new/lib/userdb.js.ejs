@@ -1,0 +1,87 @@
+---
+    to: "<%=authEnabled ? `${appName}/lib/userdb.js` : null%>"
+---
+const { db } = require('./db')
+
+const user = db.collection('user', {
+    schema: {
+        title: 'user',
+        type: 'object',
+        properties: {
+            id: {
+                type: "string",
+                nullable: false,
+                minLength: 3,
+                maxLength: 150
+            },
+            username: {
+                type: "string",
+                nullable: false,
+                minLength: 3,
+                maxLength: 100
+            },
+            email: {
+                type: "email",
+                nullable: false
+            },
+            <%if ( rolesEnabled ){%>
+            roles: {
+                type: "array",
+                items: {
+                    type: "string",
+                }
+            },
+            <%}%>
+        },
+        required: ['name', 'id', 'email'],
+        additionalProperties: false
+    }
+})
+
+const userAuth = db.collection('user-auth', {
+    schema: {
+        title: 'user',
+        type: 'object',
+        properties: {
+            id: {
+                type: "string",
+                nullable: false,
+                minLength: 3,
+                maxLength: 150
+            },
+            resetAt: {
+                type: "uuid"
+            },
+            resetAt: {
+                type: "date-time"
+            },
+            lockedAt: {
+                type: "date-time"
+            },
+            failedLogins: {
+                type: "integer"
+            },
+            passwordHash: {
+                type: "string"
+            },
+            salt: {
+                type: "string"
+            }
+        },
+        required: ['name', 'id'],
+        additionalProperties: false
+    }
+})
+
+module.exports = {
+    getUser: user.findOneById,
+    saveUser: user.save,
+    patchUser: user.upsert,
+    getUserAuth: userAuth.findOneById,
+    saveUserAuth: userAuth.save,
+    patchUserAuth: userAuth.upsert,
+    deleteUser: async ( username ) => {
+        await user.deleteById( username )
+        await userAuth.deleteById( username )
+    }
+}

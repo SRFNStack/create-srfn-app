@@ -1,7 +1,7 @@
 ---
-    to: "<%=authEnabled ? `${appName}/www/api/secure.mw.js` : null%>"
+    to: "<%=authEnabled ? `${appName}/www/api/user/secure.mw.js` : null%>"
 ---
-const { requiresAuthentication<%if ( rolesEnabled ){%>, requiresAnyRole<%}%> } = require( '../../src/apiAuth.js' )
+const { requiresAuthentication<%if ( rolesEnabled ){%>, requiresAnyRole<%}%> } = require( '../../lib/apiAuth.js' )
 <%if ( rolesEnabled ){%>
 const requiresRoles = [requiresAnyRole( 'admin')]
 <%}%>

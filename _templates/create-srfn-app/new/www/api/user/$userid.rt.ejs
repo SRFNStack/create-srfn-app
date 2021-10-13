@@ -1,10 +1,10 @@
 ---
-    to: "<%=userApiEnabled ? `${appName}/www/api/user/$userid.rt.js` : null%>"
+    to: "<%=authEnabled ? `${appName}/www/api/user/$userid.rt.js` : null%>"
 ---
-const { userdb } = require( '../../../db/userdb.js' )
+const { userdb } = require( '../../../lib/userdb.js' )
 module.exports = {
     GET: async( { req, url: { pathParameters: { userId } } } ) => {
-        <%if(rolesEnabled && authEnabled){%>
+        <%if(rolesEnabled){%>
         //only allow non admins to read their own user
         if(!req.user.roles.includes('admin') && req.user.id !== userId){
             return {
@@ -15,7 +15,7 @@ module.exports = {
         <%}%>
         return userdb.getUser( userId )
     },
-    <%if(rolesEnabled && authEnabled){%>
+    <%if(rolesEnabled){%>
     DELETE: async ( { req, url: { pathParameters: { userId } } } ) => {
         if(req.user.id === userId){
             throw 'you cannot delete yourself.'

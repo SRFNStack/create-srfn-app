@@ -1,14 +1,12 @@
 ---
-    to: "<%=authEnabled ? `${appName}/src/apiAuth.js` : null%>"
+    to: "<%=authEnabled ? `${appName}/lib/apiAuth.js` : null%>"
 ---
 const passport = require( 'passport' )
 const JwtStrategy = require( 'passport-jwt' ).Strategy
 const ExtractJwt = require( 'passport-jwt' ).ExtractJwt
 const jwt = require( 'jsonwebtoken' )
 const { log } = require( '@srfnstack/spliffy' )
-<% if ( userApiEnabled ){%>
 const crypto = require( 'crypto' )
-<%}%>
 if( !process.env.JWT_SECRET ) {
     log.error( 'JWT_SECRET unset, using default secret. This is _extremely_ insecure, set a secret by adding `JWT_SECRET=foo` to $HOME/.<%=appName%>.env.' )
 }
@@ -33,12 +31,10 @@ passport.use(
             null,
             //This is the currently logged in user, it's available on the request in any authenticated controller via request.user
             {
-                <% if ( userApiEnabled ){%>
                 id: jwtPayload.id,
                 username: jwtPayload.username,
                 <%if ( rolesEnabled ){%>
                 roles: jwtPayload.roles,
-                <%}%>
                 <%}%>
                 sub: jwtPayload.sub,
             }
@@ -55,7 +51,6 @@ passport.use(
         },
         ( accessToken, refreshToken, profile, done ) => {
             profile.id = "google:"+profile.id
-            <%if ( userApiEnabled ){%>
             return done(
                 null,
                 {
@@ -68,9 +63,6 @@ passport.use(
                     <%}%>
                 }
             )
-            <%} else {%>
-            return done(null, profile)
-            <%}%>
         }
     )
 )
@@ -79,7 +71,6 @@ module.exports = {
     init() {
         return passport.initialize()
     },
-    <%if ( userApiEnabled ){%>
     secureRandom( length = 16 ) {
         return crypto.randomBytes( Math.ceil( length / 2 ) )
             .toString( 'hex' )
@@ -108,7 +99,6 @@ module.exports = {
             res.end()
         }
     },
-    <%}%>
     <%}%>
     requiresAuthentication: passport.authenticate( 'jwt', { session: false } ),
     createToken( jwtInfo ) {
