@@ -3,9 +3,11 @@
 This project is an app generator to create a new app using the [SRFNStack](https://github.com/SRFNStack)
 
 ## Pre-requisites
-Install a recent version of node (node 14+)
+Install a recent version of node (node 14+) https://nodejs.org/en/download/
 
-Install docker and ensure docker-compose is usable on the command line.
+Install git https://git-scm.com/downloads
+
+Install docker and ensure docker-compose is usable on the command line. https://www.docker.com/products/docker-desktop
 
 ## Getting started
 Execute the app generator by running
