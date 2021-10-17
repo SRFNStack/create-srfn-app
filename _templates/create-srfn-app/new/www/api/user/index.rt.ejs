@@ -1,7 +1,7 @@
 ---
-    to: "<%=authEnabled && rolesEnabled ? `${appName}/www/api/user/index.rt.js` : null%>"
+    to: "<%=authEnabled ? `${appName}/www/api/user/index.rt.js` : null%>"
 ---
-const { userdb } = require( '../../../userdb.js' )
+const { saveUser } = require( '../../../lib/userdb.js' )
 module.exports = {
-    POST: async( { req, body } ) => userdb.saveUser( body )
+    POST: async( { body } ) => saveUser( body )
 }

@@ -58,9 +58,9 @@ export async function request( path, method, body, headers ) {
                 return res.blob().then( body => {
                     let contentType = (res.headers.get( 'content-type' ) || '').toLowerCase();
                     if( body && contentType.includes( 'json' ) ) {
-                        return JSON.parse( body.toString() )
+                        return body.text().then(txt => txt && JSON.parse(txt))
                     } else if( body && contentType.includes('text') ) {
-                        return body.toString()
+                        return body.text()
                     } else {
                         return body
                     }

@@ -34,7 +34,7 @@ document.body.append(
                     goToLogin()
                     return 'redirecting...'
                 } else {
-                    return isAuthenticated() ? centerFrame(route) : menuFrame(route)
+                    return isAuthenticated() ? menuFrame(route) : centerFrame(route)
                 }
             },
             <%}else{%>
@@ -43,7 +43,7 @@ document.body.append(
             onerror: e => {
                 console.error( e )
                 <%if(authEnabled){%>
-                return isAuthenticated() ? centerFrame(four0h4()) : menuFrame(four0h4())
+                return isAuthenticated() ? menuFrame(four0h4()) : centerFrame(four0h4())
                 <%}else{%>
                 return menuFrame(four0h4())
                 <%}%>

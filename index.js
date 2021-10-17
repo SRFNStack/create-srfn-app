@@ -19,27 +19,10 @@ async function run() {
         {
             type: 'confirm',
             name: 'authEnabled',
-            default: false,
+            default: true,
             message: "Enable JWT auth?"
-        },
-        {
-            type: 'confirm',
-            name: 'googleAuthEnabled',
-            default: false,
-            message: "Enable Google Auth?"
         }
     ] )
-
-    if(config.authEnabled) {
-        Object.assign(config, await prompt([
-            {
-                type: 'confirm',
-                name: 'rolesEnabled',
-                default: false,
-                message: "Enable roles?"
-            }
-        ]))
-    }
 
     await runner( [
         'create-srfn-app',
@@ -51,7 +34,8 @@ async function run() {
         logger: new Logger( console.log.bind( console ) ),
         templates: defaultTemplates
     })
-    await spawnSync( 'npm',['i'], { stdio: 'inherit', cwd: path.join( process.cwd(), config.appName ) } )
+    const isWin = process.platform === 'win32'
+    await spawnSync( isWin ? 'npm.cmd' : 'npm',['install'], { stdio: 'inherit', cwd: path.join( process.cwd(), config.appName ) } )
     return config
 }
 
@@ -61,15 +45,12 @@ run().then(config=>{
     if(fs.existsSync(appEnv)){
         console.log(`${appEnv} already exists. You may need to update it to work for this new application.`)
     } else {
-        fs.writeFileSync(appEnv, `#do not check this file in to source control!!\nSRFN_APP_NAME=${config.appName}\n`)
-        if(config.authEnabled){
-            console.warn(`With auth enabled, you should update JWT_SECRET in ${appEnv}.`)
-            fs.appendFileSync(appEnv, 'JWT_SECRET=change_this_value\n')
-        }
-        if(config.googleAuthEnabled){
-            console.error(`With google auth enabled, you need to update GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in ${appEnv} before your application will start.`)
-            fs.appendFileSync(appEnv, 'GOOGLE_CLIENT_ID=123456\nGOOGLE_CLIENT_SECRET=654321\n')
+        fs.writeFileSync(appEnv, `#do not check this file in to source control!!\nSRFN_APP_NAME=${config.appName}\nAPP_URL=http://localhost:10420\n`)
+        if(config.authEnabled) {
+            console.warn( `With auth enabled, you should update JWT_SECRET and set JWT_ISSUER in ${appEnv}.` )
+            fs.appendFileSync( appEnv, 'JWT_SECRET=change_this_value\n' )
         }
     }
-    console.log( 'App initialized!\nTry `cd '+config.appName+' && docker-compose up -d && npm run start` to start your app.' )
+    console.log( 'App initialized!\nTry `cd '+config.appName+' && npm run start` to start your app.' )
+    console.log( 'To get logged in, create a user by running `node createUser.js`.' )
 })

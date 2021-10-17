@@ -81,7 +81,7 @@ export function addAuthHeader( headers ) {
 
 export async function doLogin( username, password ) {
     try {
-        const res = await apiPost( '/api/auth/token', { body: btoa( JSON.stringify( { username, password } ) ) } )
+        const res = await apiPost( '/api/auth/login', { body: btoa( JSON.stringify( { username, password } ) ) } )
         if( !res.token ) {
             notify( span( 'Login Failed', br(), 'Please try again.' ) )
             return false
@@ -105,12 +105,12 @@ const setToken = ( newToken ) => {
     }
 }
 
-export async function resetPassword( resetId, password ) {
-    await apiPost( '/api/auth/resetPassword', { resetId, password } )
+export async function resetPassword( { username, resetId }, password ) {
+    await apiPost( '/api/auth/resetPassword', { username, resetId, password } )
 }
 
-export async function sendForgotPassword( email ) {
-    await apiPost( '/api/auth/sendForgotPassword', { email } )
+export async function sendForgotPassword( username ) {
+    await apiPost( '/api/auth/sendForgotPassword', { username } )
 }
 
 export function clearAuth() {

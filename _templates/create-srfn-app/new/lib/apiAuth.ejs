@@ -33,40 +33,12 @@ passport.use(
             {
                 id: jwtPayload.id,
                 username: jwtPayload.username,
-                <%if ( rolesEnabled ){%>
-                roles: jwtPayload.roles,
-                <%}%>
+                roles: jwtPayload.roles || [],
                 sub: jwtPayload.sub,
             }
         )
     ) )
-<%if (googleAuthEnabled) {%>
-const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: '/api/auth/google/callback'
-        },
-        ( accessToken, refreshToken, profile, done ) => {
-            profile.id = "google:"+profile.id
-            return done(
-                null,
-                {
-                    id: jwtPayload.id,
-                    googleId: profile.id,
-                    username: jwtPayload.username,
-                    sub: jwtPayload.sub,
-                    <%if ( rolesEnabled ){%>
-                        roles: jwtPayload.roles
-                    <%}%>
-                }
-            )
-        }
-    )
-)
-<%}%>
+
 module.exports = {
     init() {
         return passport.initialize()
@@ -83,7 +55,6 @@ module.exports = {
         hash.update( password )
         return hash.digest( 'hex' )
     },
-    <%if ( rolesEnabled ){%>
     requiresAnyRole: ( ...roles ) => {
         return ( req, res, next ) => {
             if( req.user && Array.isArray( req.user.roles ) ) {
@@ -99,7 +70,6 @@ module.exports = {
             res.end()
         }
     },
-    <%}%>
     requiresAuthentication: passport.authenticate( 'jwt', { session: false } ),
     createToken( jwtInfo ) {
         return jwt.sign(

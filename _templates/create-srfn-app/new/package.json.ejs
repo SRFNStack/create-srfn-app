@@ -1,6 +1,5 @@
 ---
 to: <%=appName%>/package.json
-helmetVersion:
 ---
 {
   "name": "<%=appName%>",
@@ -9,7 +8,7 @@ helmetVersion:
   "main": "start.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node start.js"
+    "start": "docker-compose up -d && node start.js"
   },
   "keywords": [],
   "author": "your mom",
@@ -17,16 +16,13 @@ helmetVersion:
   "dependencies": {
     <% if(authEnabled){ %>
     "redis": "<%= locals.fntagsVersion || '3.1.2' %>",
-    "@srfnstack/redish": "<%= locals.redishVersion || '0.2.2' %>",
+    "@srfnstack/redish": "<%= locals.redishVersion || '0.2.5' %>",
     "jsonwebtoken": "<%= locals.jsonwebtokenVersion || '8.5.1' %>",
     "passport": "<%= locals.passportVersion || '0.4.1' %>",
     "passport-jwt": "<%= locals.passportJwtVersion || '4.0.0' %>",
     "sendmail": "<%= locals.sendmailVersion || '1.6.1' %>",
     "uuid": "<%= locals.uuidVersion || '8.3.2' %>",
     "mjml": "<%= locals.mjmlVersion || '4.10.4' %>",
-    <%}%>
-    <% if(googleAuthEnabled){ %>
-    "passport-google-oauth20": "<%= locals.passportGoogleOauth20Version || '2.0.0' %>",
     <%}%>
     "dotenv": "<%= locals.dotenvVersion || '10.0.0' %>",
     "helmet": "<%= locals.helmetVersion || '4.6.0' %>",

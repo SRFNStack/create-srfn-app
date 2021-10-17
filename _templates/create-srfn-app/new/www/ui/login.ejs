@@ -4,7 +4,7 @@
 import { button, div, form, h1, input } from '/lib/fnelements.mjs'
 import { doLogin, isAuthenticated } from '../fn/auth.js'
 import { fnlink, goTo } from '/lib/fnroute.mjs'
-import authFrame from '../part/authFrame.js'
+import centerFrame from '../part/centerFrame.js'
 
 export default () => {
     if( isAuthenticated() ) {
@@ -21,7 +21,7 @@ export default () => {
                                      type: 'text',
                                      placeholder: 'Username'
                                  } )
-    return authFrame(
+    return centerFrame(
         h1( '<%= appName %>' ),
         form(
             {

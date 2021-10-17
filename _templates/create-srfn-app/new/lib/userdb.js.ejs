@@ -4,6 +4,7 @@
 const { db } = require('./db')
 
 const user = db.collection('user', {
+    idGenerator: user => user.username,
     schema: {
         title: 'user',
         type: 'object',
@@ -21,42 +22,60 @@ const user = db.collection('user', {
                 maxLength: 100
             },
             email: {
-                type: "email",
+                type: "string",
+                format: "email",
                 nullable: false
             },
-            <%if ( rolesEnabled ){%>
             roles: {
                 type: "array",
                 items: {
                     type: "string",
                 }
-            },
-            <%}%>
+            }
         },
-        required: ['name', 'id', 'email'],
+        required: ['username', 'id', 'email'],
         additionalProperties: false
     }
 })
 
 const userAuth = db.collection('user-auth', {
+    idField: 'username',
     schema: {
         title: 'user',
         type: 'object',
         properties: {
-            id: {
+            username: {
                 type: "string",
                 nullable: false,
                 minLength: 3,
                 maxLength: 150
             },
-            resetAt: {
-                type: "uuid"
+            resetId: {
+                type: "string",
+                format: "uuid",
+                nullable: true
             },
             resetAt: {
-                type: "date-time"
+                anyOf: [
+                    {
+                        type: "object",
+                        instanceof: "Date"
+                    },
+                    {
+                        type: 'null'
+                    }
+                ]
             },
             lockedAt: {
-                type: "date-time"
+                anyOf: [
+                    {
+                        type: "object",
+                        instanceof: "Date"
+                    },
+                    {
+                        type: 'null'
+                    }
+                ]
             },
             failedLogins: {
                 type: "integer"
@@ -68,7 +87,7 @@ const userAuth = db.collection('user-auth', {
                 type: "string"
             }
         },
-        required: ['name', 'id'],
+        required: ['passwordHash', 'salt', 'username'],
         additionalProperties: false
     }
 })
