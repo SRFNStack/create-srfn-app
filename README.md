@@ -17,9 +17,9 @@ Answer the prompts to generate your application.
 
 After running the command, you will have a new folder based on the app name that contains a fully initialized SRFN app.
 
-You must install docker and docker-compose (installed by default for desktop versions of docker) before attempting to run the app, this allows having a local database for testing.
+Cd into this new directory and run `npm install` to download all the dependencies. The app will not start until this is done.
 
-After starting the test database using `npm run start`, you can create a new user by running `npm run createUser`. This will connect to the database started by docker-compose by default.
+After starting the test database and app using `npm run start`, you can create a new user by running `npm run createUser`. This will connect to the database started by docker-compose by default.
 
 After creating a user, navigate to [http://localhost:10420](http://localhost:10420)
 to access your new application and log in with the user you created.

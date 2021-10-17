@@ -5,7 +5,6 @@ const fs = require('fs');
 const { runner } = require( 'hygen' );
 const Logger = require( 'hygen/lib/logger' );
 const defaultTemplates = path.resolve( __dirname, 'templates' );
-const { spawnSync } = require( 'child_process' )
 const { prompt } = require( 'enquirer' )
 
 async function run() {
@@ -34,8 +33,6 @@ async function run() {
         logger: new Logger( console.log.bind( console ) ),
         templates: defaultTemplates
     })
-    const isWin = process.platform === 'win32'
-    await spawnSync( isWin ? 'npm.cmd' : 'npm',['install'], { stdio: 'inherit', cwd: path.join( process.cwd(), config.appName ) } )
     return config
 }
 
@@ -51,6 +48,6 @@ run().then(config=>{
             fs.appendFileSync( appEnv, 'JWT_SECRET=change_this_value\n' )
         }
     }
-    console.log( 'App initialized!\nTry `cd '+config.appName+' && npm run start` to start your app.' )
+    console.log( 'App initialized!\nTry `cd '+config.appName+' && npm install && npm run start` to start your app.' )
     console.log( 'To get logged in, create a user by running `node createUser.js`.' )
 })
